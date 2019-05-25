@@ -1,10 +1,13 @@
 import socket
 from threading import Thread
+from file_reader import FileReader
+from pathlib import Path
 
 HOST = '0.0.0.0'
 PORT = 14900
 MAX_CLIENTS = 10
 ENC_FORMAT = 'utf-8'
+STDPATH = "data/"
 
 
 class SocketServer(Thread):
@@ -57,16 +60,40 @@ class SocketServerThread(Thread):
         self.client_sock = client_sock
         self.client_addr = client_addr
         self.number = number
+        self.file_manager = FileReader()
+
+    def login(self, data: str) -> str:
+        accounts = self.file_manager.get_accounts(Path(STDPATH + 'accounts.txt'))
+        if not accounts:
+            return ''
+        data = data.split('|')
+        login_values = list(map(lambda v: v.split(' '), accounts.split('|')))
+        for value in login_values:
+            if data == value[1:3]:
+                return ' '.join(value)
+        return ''
+
+    def register(self, data: str) -> bool:
+        accounts = self.file_manager.get_accounts(Path(STDPATH + 'accounts.txt'))
+        if not accounts:
+            return False
+        data = data.split('|')
+        login_values = list(map(lambda v: v.split(' ')[1:], accounts.split('|')))
+        if data not in login_values:
+            self.file_manager.append_to_accounts(" ".join(['2'] + data))
+        return True
 
     def run(self):
-        self.client_sock.send(f'{self.client_addr} ваш номер{self.number}'.encode(ENC_FORMAT))
+        self.client_sock.send(f'Хост: {self.client_addr[0]} Порт: {self.client_addr[1]} Ваш номер: {self.number}'.encode(ENC_FORMAT))
         while True:
             choice = self.client_sock.recv(1024).decode(ENC_FORMAT)
+            if choice == 'login':
+                value = self.client_sock.recv(128).decode(ENC_FORMAT)
+                self.client_sock.send(self.login(value).encode(ENC_FORMAT))
+            elif choice == 'exit':
+                self.close()
+                break
             # TODO server work
-
-    def stop(self):
-        print('Closed')
-        pass
 
     def close(self):
         if self.client_sock:

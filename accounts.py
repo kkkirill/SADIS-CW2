@@ -1,52 +1,56 @@
 class Account:
     def __init__(self, role: int, login: str, password: str, **kwargs):
-        self.role = role
-        self.login = login
-        self.password = password
-        self.email = kwargs.get('email', '')
-        self.fn = kwargs.get('fn', '')
-        self.phone = kwargs.get('phone', '')
-        self.fax = kwargs.get('fax', '')
+        self._role = role
+        self._login = login
+        self._password = password
+        self._email = kwargs.get('email', '')
+        self._fn = kwargs.get('fn', '')
+        self._phone = kwargs.get('phone', '')
+        self._fax = kwargs.get('fax', '')
+
+    @property
+    def role(self):
+        return self._role
 
     @property
     def password(self):
-        return self.password
+        return self._password
 
     @property
     def email(self):
-        return self.email
+        return self._email
 
     @property
     def fn(self):
-        return self.fn
+        return self._fn
 
     @property
     def phone(self):
-        return self.phone
+        return self._phone
 
     @property
     def fax(self):
-        return self.fax
+        return self._fax
 
     @password.setter
     def password(self, new_password: str):
-        self.password = new_password
+        self._password = new_password
 
     @email.setter
     def email(self, new_email: str):
-        self.email = new_email
+        self._email = new_email
 
     @fn.setter
     def fn(self, new_fn: str):
-        self.fn = new_fn
+        self._fn = new_fn
 
     @phone.setter
     def phone(self, new_phone: str):
-        self.email = new_phone
+        self._email = new_phone
 
     @fax.setter
     def fax(self, new_fax: str):
-        self.email = new_fax
+        self._email = new_fax
 
 # class Admin(Account):
 #     def __init__(self, login: str, password: str, **kwargs):
