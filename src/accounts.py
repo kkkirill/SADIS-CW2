@@ -51,14 +51,3 @@ class Account:
     @fax.setter
     def fax(self, new_fax: str):
         self._email = new_fax
-
-# class Admin(Account):
-#     def __init__(self, login: str, password: str, **kwargs):
-#         super(Admin, self).__init__(login, password, **kwargs)
-#     pass
-#
-# class Expert(Account):
-#     pass
-#
-# class User(Account):
-#     pass
