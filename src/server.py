@@ -6,7 +6,7 @@ from pathlib import Path
 HOST = '0.0.0.0'
 PORT = 14900
 MAX_CLIENTS = 10
-ENC_FORMAT = 'utf-8'
+ENC_FORMAT = 'cp1251'
 STDPATH = "data/"
 
 

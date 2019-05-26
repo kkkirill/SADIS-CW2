@@ -4,8 +4,7 @@ from tkinter import messagebox
 
 from src.accounts import Account
 
-ENC_FORMAT = 'utf-8'
-
+ENC_FORMAT = 'cp1251'
 
 def from_list_to_account_dict(values: list) -> dict:
     account_titles = ('email', 'email', 'fn', 'phone', 'fax')

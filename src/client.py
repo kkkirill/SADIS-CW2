@@ -5,7 +5,8 @@ from src.drawer import Drawer
 from src.menus.user_menu import UserMenu
 from src.menus.admin_menu import AdminMenu
 from src.menus.expert_menu import ExpertMenu
-ENC_FORMAT = 'utf-8'
+
+ENC_FORMAT = 'cp1251'
 
 
 class Interface(AuthorizationMixin):

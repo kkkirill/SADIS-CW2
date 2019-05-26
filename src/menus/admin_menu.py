@@ -115,8 +115,11 @@ class AdminMenu:
             self.t_goals_list.insert(END, goal)
 
     @Drawer.remove_prev_tags
+    @Drawer.add_goal
     def add_goal(self):
-        pass
+        self.t_cancel_button.bind('<Button-1>', lambda _: self.manage_goals(), '+')
+        self.t_submit_button.bind('<Button-1>', lambda _: True, '+')
+
 
     @Drawer.remove_prev_tags
     def remove_goal(self):

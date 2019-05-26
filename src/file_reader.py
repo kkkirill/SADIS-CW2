@@ -4,7 +4,7 @@ class FileReader:
         pass
 
     def get_content_from_file(self, filename: str) -> str:
-        with open(filename, 'r') as f:
+        with open(filename, 'r', encoding='windows-1251') as f:
             f.seek(0)
             if not f.read(1):
                 return ''

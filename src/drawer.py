@@ -250,10 +250,26 @@ class Drawer:
         @wraps(func)
         def wrapper(self, **kwargs):
             self.t_goals_list = Listbox(self.root, width=45, height=15, font=('times', 13))
-            self.t_goals_list.place(x=125, y=75)
+            self.t_goals_list.place(x=300, y=75)
             self.t_exit_button = Button(self.root, background=b_color, foreground=bf_color, width=50, height=3,
                                   font=font_family, text="Назад")
             self.t_exit_button.place(x=400, y=500, height=30, width=200)
             Drawer.hover_bind_button(self.t_exit_button)
+            return func(self, **kwargs)
+        return wrapper
+
+    @staticmethod
+    def add_goal(func):
+        @wraps(func)
+        def wrapper(self, **kwargs):
+            self.t_goal_label = Label(text='Введите цель', font=font_family, width=40)
+            self.t_goal_label.place(x=325, y=200)
+            self.t_goal_input = Entry(font=font_family, width=40)
+            self.t_goal_input.place(x=325, y=250)
+            self.t_submit_button = Button(self.root, background=b_color, foreground=bf_color, width=50, height=3, font=font_family, text="Добавить")
+            self.t_submit_button.place(x=400, y=450, height=30, width=200)
+            self.t_cancel_button = Button(self.root, background=b_color, foreground=bf_color, width=50, height=3, font=font_family, text="Назад")
+            self.t_cancel_button.place(x=400, y=500, height=30, width=200)
+            Drawer.hover_bind_button(self.t_submit_button, self.t_cancel_button)
             return func(self, **kwargs)
         return wrapper
