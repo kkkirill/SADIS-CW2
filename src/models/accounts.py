@@ -9,6 +9,10 @@ class Account:
         self._fax = kwargs.get('fax', '')
 
     @property
+    def login(self):
+        return self._login
+
+    @property
     def role(self):
         return self._role
 
@@ -46,8 +50,8 @@ class Account:
 
     @phone.setter
     def phone(self, new_phone: str):
-        self._email = new_phone
+        self._phone = new_phone
 
     @fax.setter
     def fax(self, new_fax: str):
-        self._email = new_fax
+        self._fax = new_fax

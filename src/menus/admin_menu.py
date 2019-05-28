@@ -1,5 +1,5 @@
 import socket
-from tkinter import Tk, END, Entry, Label, StringVar
+from tkinter import Tk, END, Entry, Label, StringVar, messagebox
 from src.drawer import Drawer
 
 
@@ -118,9 +118,36 @@ class AdminMenu:
     @Drawer.add_goal
     def add_goal(self):
         self.t_cancel_button.bind('<Button-1>', lambda _: self.manage_goals(), '+')
-        self.t_submit_button.bind('<Button-1>', lambda _: True, '+')
+        self.t_submit_button.bind('<Button-1>', lambda _: self.real_add_goal(), '+')
 
+    def real_add_goal(self):
+        self.sock.send('add_goals'.encode())
+        value: str = self.t_goal_input.get()
+        if value:
+            self.sock.send(value.encode())
+            values = self.sock.recv(512).decode()
+            messagebox.showinfo(message='Цель успешно добавлена!')
+            self.manage_goals()
+        else:
+            messagebox.showerror(message='Необходимо ввести цель!')
 
     @Drawer.remove_prev_tags
+    @Drawer.remove_goal
     def remove_goal(self):
-        pass
+        self.sock.send('get_goals'.encode())
+        goals = self.sock.recv(512).decode().split('|')
+        for goal in goals:
+            self.t_goals_list.insert(END, goal)
+        self.t_exit_button.bind('<Button-1>', lambda _: self.manage_goals(), '+')
+        self.t_remove_button.bind('<Button-1>', lambda _: self.real_remove_goal(self.t_goals_list.curselection()[0]) if self.t_goals_list.curselection().__len__() else None, '+')
+
+    def real_remove_goal(self, number: int):
+        self.sock.send('remove_goals'.encode())
+        self.sock.send(f'{number}'.encode())
+        self.sock.recv(512).decode()
+        self.t_goals_list.delete(self.t_goals_list.curselection())
+
+
+
+
+

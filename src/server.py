@@ -1,7 +1,14 @@
 import socket
+from pickle import loads, dumps
 from threading import Thread
-from src.file_reader import FileReader
+from typing import List
+
+from src.models.accounts import Account
+from src.models.feedback import Feedback
+from src.models.file_manager import FileManager
 from pathlib import Path
+
+from src.models.order import Order
 
 HOST = '0.0.0.0'
 PORT = 14900
@@ -60,7 +67,7 @@ class SocketServerThread(Thread):
         self.client_sock = client_sock
         self.client_addr = client_addr
         self.number = number
-        self.file_manager = FileReader()
+        self.file_manager = FileManager()
 
     def login(self, data: str) -> (str or None):
         accounts = self.file_manager.get_content_from_file(Path(STDPATH + 'accounts.txt'))
@@ -92,14 +99,65 @@ class SocketServerThread(Thread):
         self.file_manager.write_to_accounts('\n'.join(accounts), Path(STDPATH + 'accounts.txt'))
         return '|'.join(accounts)
 
+    def change_account(self, account: Account, next_acc: list):
+        accounts: list = self.file_manager.get_content_from_file(Path(STDPATH + 'accounts.txt')).split('|')
+        curr_acc = ' '.join([str(account.role), account.login, account.password, account.email, account.fn, account.phone, account.fax])
+        if next_acc.__len__() >= 5:
+            next_acc[4] = next_acc[4].replace(' ', '_')
+        next_acc = ' '.join(next_acc)
+        try:
+            index = accounts.index(curr_acc)
+            accounts[index] = next_acc
+            self.file_manager.write_to_file('\n'.join(accounts), Path(STDPATH + 'accounts.txt'))
+        except ValueError:
+            accounts.append(next_acc)
+
     def get_users(self, role: str):
         accounts = list(filter(lambda value: value.startswith(role), self.file_manager.get_content_from_file(Path(STDPATH + 'accounts.txt')).split('|')))
         return '|'.join(accounts) if accounts else 'None'
 
     def get_goals(self):
         goals = self.file_manager.get_content_from_file(Path(STDPATH + 'goals.txt'))
-        print(goals)
         return goals if goals else 'None'
+
+    def add_goal(self, goal: str):
+        goals = self.get_goals()
+        if goals != 'None':
+            goals = goals.split('|')
+            goals.append(goal)
+        else:
+            goals = [goal]
+        self.file_manager.write_to_file('\n'.join(goals), Path(STDPATH + 'goals.txt'))
+        return "|".join(goals)
+
+    def remove_goal(self, number: str):
+        goals = self.get_goals()
+        if goals != 'None':
+            goals = goals.split('|')
+            goals.pop(int(number))
+            self.file_manager.write_to_file('\n'.join(goals), Path(STDPATH + 'goals.txt'))
+            return '|'.join(goals)
+        else:
+            return 'None'
+
+    def get_orders(self, account: Account):
+        values = self.file_manager.get_orders(Path(STDPATH + f'{account.login}'))
+        return values if values else 'None'
+
+    def add_order(self, order: Order):
+        self.file_manager.append_order(order, Path(STDPATH + f'{order.account.login}'))
+
+    def remove_order(self, account: Account, index: int):
+        orders = self.file_manager.get_orders(Path(STDPATH + f'{account.login}'))
+        orders.pop(index)
+        self.file_manager.write_orders(orders, Path(STDPATH + f'{account.login}'))
+
+    def add_feedback(self, feedback: Feedback):
+        self.file_manager.append_feedbacks(feedback, Path(STDPATH + f'{feedback.account.login}'))
+
+
+    def get_feedbacks(self):
+        return self.file_manager.get_feedbacks(Path(STDPATH))
 
     def run(self):
         self.client_sock.send(f'Хост: {self.client_addr[0]} Порт: {self.client_addr[1]} Ваш номер: {self.number}'.encode(ENC_FORMAT))
@@ -118,9 +176,41 @@ class SocketServerThread(Thread):
                 value = self.client_sock.recv(16).decode(ENC_FORMAT).split('|')
                 value = str(self.remove_user(value[0], value[1]))
                 self.client_sock.send(value.encode(ENC_FORMAT))
+            elif choice == 'change_accounts':
+                prev_value = self.client_sock.recv(4096)
+                prev_value: Account = loads(prev_value, encoding='utf-8')
+                values = self.client_sock.recv(4096)
+                values = values.decode(ENC_FORMAT)
+                values = values.split('|')
+                self.change_account(prev_value, values)
+
+            elif choice == 'add_goals':
+                value = self.client_sock.recv(256).decode(ENC_FORMAT)
+                value = self.add_goal(value)
+                self.client_sock.send(value.encode(ENC_FORMAT))
+            elif choice == 'remove_goals':
+                value = self.client_sock.recv(16).decode(ENC_FORMAT)
+                value = self.remove_goal(value)
+                self.client_sock.send(value.encode(ENC_FORMAT))
             elif choice == 'get_goals':
                 value = self.get_goals()
                 self.client_sock.send(value.encode(ENC_FORMAT))
+            elif choice == 'get_orders':
+                account: Account = loads(self.client_sock.recv(256), encoding='utf-8')
+                self.client_sock.send(dumps(self.get_orders(account)))
+            elif choice == 'add_orders':
+                order: Order = loads(self.client_sock.recv(4096), encoding='utf-8')
+                self.add_order(order)
+            elif choice == 'remove_orders':
+                account: Account = loads(self.client_sock.recv(256), encoding='utf-8')
+                order_index: int = int(self.client_sock.recv(16).decode(ENC_FORMAT))
+                self.remove_order(account, order_index)
+            elif choice == 'get_feedbacks':
+                self.client_sock.send(dumps(self.get_feedbacks()))
+            elif choice == 'add_feedbacks':
+                feedback: Feedback = loads(self.client_sock.recv(8192), encoding='utf-8')
+                print(feedback)
+                self.add_feedback(feedback)
             elif choice == 'exit':
                 self.close()
                 break

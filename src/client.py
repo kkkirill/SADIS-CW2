@@ -39,9 +39,9 @@ class Interface(AuthorizationMixin):
         self.root.mainloop()
 
     @Drawer.remove_prev_tags
-    @Drawer.show_user_menu
     def call_user_menu(self):
-        pass
+        self.admin_menu = UserMenu(self.account, self.sock, self.root, self.common_menu, super(Interface, self))
+        self.admin_menu.call_user_menu()
 
     @Drawer.remove_prev_tags
     def call_admin_menu(self):
@@ -49,9 +49,9 @@ class Interface(AuthorizationMixin):
         self.admin_menu.call_admin_menu()
 
     @Drawer.remove_prev_tags
-    @Drawer.show_expert_menu
     def call_expert_menu(self):
-        pass
+        self.expert_menu = ExpertMenu(self.sock, self.root, self.common_menu)
+        self.expert_menu.call_expert_menu()
 
     def show_any_menu(self):
         if hasattr(self, 'account') and self.account:

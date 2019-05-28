@@ -2,12 +2,13 @@ import socket
 from validate_email import validate_email
 from tkinter import messagebox
 
-from src.accounts import Account
+from src.models.accounts import Account
 
 ENC_FORMAT = 'cp1251'
 
+
 def from_list_to_account_dict(values: list) -> dict:
-    account_titles = ('email', 'email', 'fn', 'phone', 'fax')
+    account_titles = ('email', 'fn', 'phone', 'fax')
     return {account_titles[i]: value for i, value in enumerate(values)}
 
 
@@ -30,12 +31,12 @@ class AuthorizationMixin:
         account = self.socket.recv(256).decode(ENC_FORMAT)
         if account != 'None':
             account = account.split(' ')
-            return Account(int(account[0]), *account[1:3], **from_list_to_account_dict(account[4:]))
+            return Account(int(account[0]), *account[1:3], **from_list_to_account_dict(account[3:]))
         else:
             return None
 
     @staticmethod
-    def registration_validation(self, role=2, autorization=None):
+    def registration_validation(self, role=2, autorization=None, flag=False):
         login = self.t_login_input.get()
         password = self.t_password_input.get()
         email = self.t_email_input.get()
@@ -49,8 +50,11 @@ class AuthorizationMixin:
                     self.account = self.registration(role='0', login=login, password=password, email=email, fn=fn,
                                                      phone=phone, fax=fax)
                 else:
-                    self.account = self.autorization.registration(role=role, login=login, password=password, email=email, fn=fn,
+                    if not flag:
+                        self.account = self.autorization.registration(role=role, login=login, password=password, email=email, fn=fn,
                                                      phone=phone, fax=fax)
+                    else:
+                        self.account = Account(role, login, password, email=email, fn=fn, phone=phone, fax=fax)
                 if self.account is None:
                     messagebox.showerror(message='Ошибка регистрации! Данный логин занят!')
                 else:
