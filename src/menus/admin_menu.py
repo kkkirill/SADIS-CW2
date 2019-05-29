@@ -1,4 +1,5 @@
 import socket
+from pickle import loads
 from tkinter import Tk, END, Entry, Label, StringVar, messagebox
 from src.drawer import Drawer
 
@@ -16,11 +17,32 @@ class AdminMenu:
         self.t_remove_users_button.bind('<Button-1>', lambda _: self.remove_account('0'), '+')
         self.t_manage_goals_button.bind('<Button-1>', lambda _: self.manage_goals(), '+')
         self.t_manage_experts_button.bind('<Button-1>', lambda _: self.manage_experts(), '+')
+        self.t_show_marks_button.bind('<Button-1>', lambda _: self.show_marks(), '+')
         self.t_exit_button.bind('<Button-1>', lambda _: self.exit(), '+')
 
     @Drawer.remove_prev_tags
     def exit(self):
         self.common_menu()
+
+    @Drawer.remove_prev_tags
+    @Drawer.show_marks
+    def show_marks(self):
+        self.t_exit_button.bind('<Button-1>', lambda _: self.call_admin_menu(), '+')
+        self.sock.send('get_marks'.encode())
+        marks = loads(self.sock.recv(2048), encoding='utf-8')
+        self.sock.send('get_goals'.encode())
+        goals = self.sock.recv(512).decode().split('|')
+        amount = len(goals)
+        totals = []
+        if len(marks) > 1:
+            for i in range(amount):
+                totals.append(round(sum(list(zip(*marks))[i]) / len(marks), 3))
+        else:
+            totals.extend(map(lambda val: round(val, 3), *marks))
+        for i, goal in enumerate(goals):
+            self.t_goals_list.insert(END, f'{goal} - {totals[i]}')
+        self.t_total_amount_label['text'] = f'Кол-во целей: {amount}'
+
 
     @Drawer.remove_prev_tags
     @Drawer.show_manage_experts_menu

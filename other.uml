@@ -2,39 +2,15 @@
 <Diagram>
   <ID>Python</ID>
   <OriginalElement>#D:/Work/Projects/Lera/courseWork/src/menus/admin_menu.py</OriginalElement>
-  <nodes>
-    <node x="1123.0" y="0.0">src.server.SocketServer</node>
-    <node x="117.5" y="652.25">src.client.Interface</node>
-    <node x="712.0" y="0.0">src.server.SocketServerThread</node>
-    <node x="252.25" y="0.0">object</node>
-    <node x="1.25" y="431.75">src.authorization.AuthorizationMixin</node>
-    <node x="428.0" y="431.0">src.drawer.Drawer</node>
-  </nodes>
+  <nodes />
   <notes />
-  <edges>
-    <edge source="src.client.Interface" target="src.authorization.AuthorizationMixin">
-      <point x="0.0" y="-124.5" />
-      <point x="0.0" y="80.5" />
-    </edge>
-    <edge source="src.authorization.AuthorizationMixin" target="object">
-      <point x="0.0" y="-80.5" />
-      <point x="204.0" y="406.0" />
-      <point x="314.0" y="406.0" />
-      <point x="-61.75" y="190.5" />
-    </edge>
-    <edge source="src.drawer.Drawer" target="object">
-      <point x="0.0" y="-322.5" />
-      <point x="547.5" y="406.0" />
-      <point x="437.5" y="406.0" />
-      <point x="61.75" y="190.5" />
-    </edge>
-  </edges>
-  <settings layout="Hierarchic Group" zoom="0.8" x="776.0" y="413.75" />
-  <SelectedNodes>
-    <node>src.client.Interface</node>
-  </SelectedNodes>
+  <edges />
+  <settings layout="Hierarchic Group" zoom="1.0" x="606.5" y="327.0" />
+  <SelectedNodes />
   <Categories>
     <Category>Methods</Category>
+    <Category>Inner Classes</Category>
+    <Category>Fields</Category>
   </Categories>
 </Diagram>
 

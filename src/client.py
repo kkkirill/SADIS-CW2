@@ -50,7 +50,7 @@ class Interface(AuthorizationMixin):
 
     @Drawer.remove_prev_tags
     def call_expert_menu(self):
-        self.expert_menu = ExpertMenu(self.sock, self.root, self.common_menu)
+        self.expert_menu = ExpertMenu(self.sock, self.root, self.common_menu, self.account)
         self.expert_menu.call_expert_menu()
 
     def show_any_menu(self):

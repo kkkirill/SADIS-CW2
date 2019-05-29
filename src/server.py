@@ -164,6 +164,12 @@ class SocketServerThread(Thread):
     def get_feedbacks(self):
         return self.file_manager.get_feedbacks(Path(STDPATH))
 
+    def write_marks(self, account: Account, marks: List[float]):
+        self.file_manager.write_marks(marks, Path(STDPATH + f'{account.login}'))
+
+    def get_marks(self):
+        return self.file_manager.get_marks(Path(STDPATH))
+
     def run(self):
         self.client_sock.send(f'Хост: {self.client_addr[0]} Порт: {self.client_addr[1]} Ваш номер: {self.number}'.encode(ENC_FORMAT))
         while True:
@@ -217,6 +223,13 @@ class SocketServerThread(Thread):
             elif choice == 'add_feedbacks':
                 feedback: Feedback = loads(self.client_sock.recv(8192), encoding='utf-8')
                 self.add_feedback(feedback)
+            elif choice == 'write_marks':
+                account = loads(self.client_sock.recv(512), encoding='utf-8')
+                marks = loads(self.client_sock.recv(4096), encoding='utf-8')
+                self.write_marks(account, marks)
+            elif choice == 'get_marks':
+                values = self.get_marks()
+                self.client_sock.send(dumps(values))
             elif choice == 'exit':
                 self.close()
                 break

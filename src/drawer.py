@@ -156,10 +156,13 @@ class Drawer:
             self.t_manage_experts_button = Button(self.root, background=b_color, foreground=bf_color, width=50, height=3,
                                   font=font_family, text="Управление экспертами")
             self.t_manage_experts_button.place(x=400, y=300, height=30, width=200)
+            self.t_show_marks_button = Button(self.root, background=b_color, foreground=bf_color, width=50, height=3,
+                                  font=font_family, text="Просмотреть оценки")
+            self.t_show_marks_button.place(x=400, y=350, height=30, width=200)
             self.t_exit_button = Button(self.root, background=b_color, foreground=bf_color, width=50, height=3,
                                   font=font_family, text="Выйти из акканута")
             self.t_exit_button.place(x=400, y=500, height=30, width=200)
-            Drawer.hover_bind_button(self.t_manage_experts_button, self.t_manage_goals_button, self.t_remove_users_button, self.t_exit_button)
+            Drawer.hover_bind_button(self.t_manage_experts_button, self.t_manage_goals_button, self.t_remove_users_button, self.t_show_marks_button, self.t_exit_button)
             ret = func(self, **kwargs)
         return wrapper
 
@@ -547,10 +550,27 @@ class Drawer:
             self.t_goals_list = Listbox(self.root, width=30, height=15, font=('times', 14))
             self.t_goals_list.place(x=125, y=75)
             self.t_total_amount_label = Label(font=font_family)
-            self.t_total_amount_label.place(x=130, y=430, width=30, height=15)
+            self.t_total_amount_label.place(x=125, y=430, width=273, height=20)
+            self.t_scale_label = Label(font=font_family, text='Размер шкалы: 30')
+            self.t_scale_label.place(x=125, y=460, width=273, height=20)
             self.t_exit_button = Button(self.root, background=b_color, foreground=bf_color, width=50, height=3,
                                   font=font_family, text="Назад")
-            self.t_exit_button.place(x=400, y=500, height=30, width=200)
+            self.t_exit_button.place(x=400, y=550, height=30, width=200)
+            Drawer.hover_bind_button(self.t_exit_button)
+            return func(self, **kwargs)
+        return wrapper
+
+    @staticmethod
+    def show_marks(func):
+        @wraps(func)
+        def wrapper(self, **kwargs):
+            self.t_goals_list = Listbox(self.root, width=30, height=15, font=('times', 14))
+            self.t_goals_list.place(x=360, y=75)
+            self.t_total_amount_label = Label(font=font_family)
+            self.t_total_amount_label.place(x=360, y=470, width=273, height=20)
+            self.t_exit_button = Button(self.root, background=b_color, foreground=bf_color, width=50, height=3,
+                                  font=font_family, text="Назад")
+            self.t_exit_button.place(x=400, y=550, height=30, width=200)
             Drawer.hover_bind_button(self.t_exit_button)
             return func(self, **kwargs)
         return wrapper

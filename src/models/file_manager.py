@@ -12,6 +12,16 @@ class FileManager:
     def __init__(self):
         pass
 
+    def get_marks(self, path: Path):
+        marks = []
+        for i, dir in enumerate(os.listdir(path)):
+            temppath = path.joinpath(dir, 'marks.txt')
+            if os.path.exists(temppath):
+                with open(temppath, mode='rb') as f:
+                    templist = load(f)
+                    marks.append(templist)
+        return marks
+
     def get_feedbacks(self, path: Path=None) -> List[Feedback]:
         feedbacks = []
         for i, dir in enumerate(os.listdir(path)):
@@ -24,12 +34,14 @@ class FileManager:
                         except EOFError:
                             break
                         feedbacks.append(feedback)
-        # if not os.path.exists(filename):
-        #     os.makedirs(filename)
-        # filename = filename.joinpath('feedbacks.txt')
-        # if os.path.exists(filename):
-        #     with open(filename, 'rb') as f:
         return feedbacks
+
+    def write_marks(self, marks: List[float], path: Path):
+        if not os.path.exists(path):
+            os.makedirs(path)
+        path = path.joinpath('marks.txt')
+        with open(path, mode='wb') as f:
+            dump(marks, f)
 
     def write_feedbacks(self, feedbacks: List[Feedback], filename: str=None):
         if not os.path.exists(filename):
