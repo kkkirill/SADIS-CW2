@@ -1,6 +1,6 @@
 import socket
 from pickle import loads
-from tkinter import Tk, END, DISABLED
+from tkinter import Tk, END, DISABLED, Label, Entry
 from typing import List
 
 from src.drawer import Drawer
@@ -16,7 +16,7 @@ class ExpertMenu:
     @Drawer.remove_prev_tags
     @Drawer.show_expert_menu
     def call_expert_menu(self):
-        self.t_expert_mark_button.bind()
+        self.t_expert_mark_button.bind('<Button-1>', lambda _: self.mark_goals(), '+')
         self.t_show_feedbacks_button.bind('<Button-1>', lambda _: self.show_feedbacks(), '+')
         self.t_exit_button.bind('<Button-1>', lambda _: self.exit(), '+')
 
@@ -45,3 +45,36 @@ class ExpertMenu:
         self.t_third_input.configure(state=DISABLED)
         self.t_forth_input.insert(0, feedback.feedbacks[3])
         self.t_forth_input.configure(state=DISABLED)
+
+    @Drawer.remove_prev_tags
+    @Drawer.draw_marks
+    def mark_goals(self):
+        self.sock.send('get_all_orders'.encode())
+        orders: list = loads(self.sock.recv(16392))
+        self.sock.send('get_goals'.encode())
+        goals: list = self.sock.recv(16392).decode().split('|')
+        goals_amount = len(goals)
+        self.t_total_amount_label['text'] = str(goals_amount)
+        for i, goal in enumerate(goals, start=1):
+            self.t_goals_list.insert(END, f'{i}) {goal}')
+        self.t_exit_button.bind('<Button-1>', lambda _: self.call_expert_menu(), '+')
+        self.draw_table(goals_amount)
+
+    def draw_table(self, amount: int):
+        step = 40
+        step2 = 30
+        for num in range(1, amount + 1):
+            setattr(self, f'self.t_{num}_label', Label(text=f"{num}"))
+            getattr(self, f'self.t_{num}_label').place(x=500 + step*num, y=75, width=30, height=15)
+        print(amount, amount**2)
+        for num in range(1, amount + 1):
+            setattr(self, f'self.t_{num + amount + 1}_label', Label(text=f"{num}"))
+            getattr(self, f'self.t_{num + amount + 1}_label').place(x=500, y=75 + step2*num, width=30, height=15)
+        for num in range(1, amount + 1):
+            for num1 in range(1, amount + 1):
+                setattr(self, f'self.t_{num}{num1}_input', Entry(font='Arial 12'))
+                getattr(self, f'self.t_{num}{num1}_input').place(x=500 + step*num1, y=75 + step2*num, width=30, height=15)
+                if num == num1:
+                    getattr(self, f'self.t_{num}{num1}_input').configure(state='readonly')
+
+        pass

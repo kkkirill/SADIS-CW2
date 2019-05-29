@@ -47,6 +47,7 @@ class AuthorizationMixin:
             if phone[1:].isdigit() and fax[1:].isdigit() and fn.count(' ') == 2 \
                     and validate_email(email) and login.isalnum() and password.isalnum():
                 if autorization is None:
+                    fn = fn.replace(' ', '_')
                     self.account = self.registration(role='0', login=login, password=password, email=email, fn=fn,
                                                      phone=phone, fax=fax)
                 else:

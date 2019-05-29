@@ -539,3 +539,18 @@ class Drawer:
             self.t_forth_input.place(x=700, y=250, height=30, width=240)
             return func(self, *args)
         return wrapper
+
+    @staticmethod
+    def draw_marks(func):
+        @wraps(func)
+        def wrapper(self, **kwargs):
+            self.t_goals_list = Listbox(self.root, width=30, height=15, font=('times', 14))
+            self.t_goals_list.place(x=125, y=75)
+            self.t_total_amount_label = Label(font=font_family)
+            self.t_total_amount_label.place(x=130, y=430, width=30, height=15)
+            self.t_exit_button = Button(self.root, background=b_color, foreground=bf_color, width=50, height=3,
+                                  font=font_family, text="Назад")
+            self.t_exit_button.place(x=400, y=500, height=30, width=200)
+            Drawer.hover_bind_button(self.t_exit_button)
+            return func(self, **kwargs)
+        return wrapper

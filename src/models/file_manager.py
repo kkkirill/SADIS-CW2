@@ -63,6 +63,22 @@ class FileManager:
                     orders.append(order)
         return orders
 
+    def get_all_orders(self, path: Path):
+        orders = []
+        for i, dir in enumerate(os.listdir(path)):
+            if path.joinpath(dir).is_dir():
+                temppath = path.joinpath(dir, 'orders.txt')
+                if os.path.exists(temppath):
+                    print(temppath)
+                    with open(temppath, mode='rb') as f:
+                        while True:
+                            try:
+                                order = load(f)
+                            except EOFError:
+                                break
+                            orders.append(order)
+        return orders
+
     def write_orders(self, orders: List[Order], filename: str=None):
         if not os.path.exists(filename):
             os.makedirs(filename)

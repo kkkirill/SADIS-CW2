@@ -144,6 +144,12 @@ class SocketServerThread(Thread):
         values = self.file_manager.get_orders(Path(STDPATH + f'{account.login}'))
         return values if values else 'None'
 
+    def get_all_orders(self):
+        orders = self.file_manager.get_all_orders(Path(STDPATH))
+        print(orders)
+        print(len(orders))
+        return orders
+
     def add_order(self, order: Order):
         self.file_manager.append_order(order, Path(STDPATH + f'{order.account.login}'))
 
@@ -154,7 +160,6 @@ class SocketServerThread(Thread):
 
     def add_feedback(self, feedback: Feedback):
         self.file_manager.append_feedbacks(feedback, Path(STDPATH + f'{feedback.account.login}'))
-
 
     def get_feedbacks(self):
         return self.file_manager.get_feedbacks(Path(STDPATH))
@@ -183,7 +188,6 @@ class SocketServerThread(Thread):
                 values = values.decode(ENC_FORMAT)
                 values = values.split('|')
                 self.change_account(prev_value, values)
-
             elif choice == 'add_goals':
                 value = self.client_sock.recv(256).decode(ENC_FORMAT)
                 value = self.add_goal(value)
@@ -192,6 +196,9 @@ class SocketServerThread(Thread):
                 value = self.client_sock.recv(16).decode(ENC_FORMAT)
                 value = self.remove_goal(value)
                 self.client_sock.send(value.encode(ENC_FORMAT))
+            elif choice == 'get_all_orders':
+                value = self.get_all_orders()
+                self.client_sock.send(dumps(value))
             elif choice == 'get_goals':
                 value = self.get_goals()
                 self.client_sock.send(value.encode(ENC_FORMAT))
@@ -209,7 +216,6 @@ class SocketServerThread(Thread):
                 self.client_sock.send(dumps(self.get_feedbacks()))
             elif choice == 'add_feedbacks':
                 feedback: Feedback = loads(self.client_sock.recv(8192), encoding='utf-8')
-                print(feedback)
                 self.add_feedback(feedback)
             elif choice == 'exit':
                 self.close()

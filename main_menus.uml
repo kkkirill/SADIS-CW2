@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>Python</ID>
+  <OriginalElement>#D:/Work/Projects/Lera/courseWork/src/menus/admin_menu.py</OriginalElement>
+  <nodes>
+    <node x="0.0" y="464.0">src.menus.user_menu.UserMenu</node>
+    <node x="587.0" y="464.0">src.menus.expert_menu.ExpertMenu</node>
+    <node x="664.0" y="0.0">object</node>
+    <node x="1009.25" y="463.5">src.menus.admin_menu.AdminMenu</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="src.menus.expert_menu.ExpertMenu" target="object">
+      <point x="0.0" y="-91.5" />
+      <point x="0.0" y="190.5" />
+    </edge>
+    <edge source="src.menus.admin_menu.AdminMenu" target="object">
+      <point x="0.0" y="-179.5" />
+      <point x="1243.5" y="406.0" />
+      <point x="869.8333333333333" y="406.0" />
+      <point x="82.33333333333326" y="190.5" />
+    </edge>
+    <edge source="src.menus.user_menu.UserMenu" target="object">
+      <point x="0.0" y="-146.5" />
+      <point x="283.5" y="406.0" />
+      <point x="705.1666666666667" y="406.0" />
+      <point x="-82.33333333333331" y="190.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.8" x="714.0" y="413.75" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Methods</Category>
+  </Categories>
+</Diagram>
+
